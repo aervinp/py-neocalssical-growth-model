@@ -1,15 +1,88 @@
 ---
-title: "py_neoclassical_growth_calibration"
+title: "Calibrating the Neoclassical Growth Model to Paraguay"
 author: "Paul"
-date: "August 7, 2017"
-output: html_document
+date: "`r format(Sys.Date())`"
+output: github_document
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+## Introduction
+
+The purpose of this document is to show how to calibrate the neoclassical growth model. The example shown here is for Paraguay, but the same method could be applied to any country where data is available. I begin by introducing the model. Then, I perform the calibration, forecast GDP to the year 2025, and perform some counterfactuals. 
+
+## The Neoclassical Growth Model
+
+In its simplest form the neoclassical growth model is defined by the following set of equations:
+
+$$ Y_t=K_t^\alpha(A_tL_t)^{(1-\alpha)} $$
+$$ K_{t+1}=I_t+(1-\delta)K_t $$
+$$ L_{t+1}=(1+g_L)L_t$$
+$$ A_{t+1}=(1+g_A)A_t,$$
+along with initial conditions for $K_0, L_0$, and $A_0$. $Y_t$ is total output measured by real GDP in constant dollars. Total ouput is produced by a Cobb-Douglas production function with capital $K_t$, labor input $L_t$, and productivity $A_t$. The parameter $\alpha$, with $0<\alpha<1$, is referred to as the "physical capital share."
+
+Labor $L_t$ and productivity $A_t$ grow at exogenous growth rates of $g_L$ and $g_A$, respectively. But capital $K_t$ is determined by physical capital accumulation, i.e. the "law of motion capital", where future capital $K_{t+1}$ is determined by investment $I_t$, with the savings rate $s_t=I_t/Y_t$, and the rate of depreciation $\delta$.
+
+##Data
+To use the code in this section you will first need to set your working directory. This can be done with
+
+```{r eval=FALSE}
+setwd("C:/.../your_working_directory")
 ```
 
-## R Markdown
+```{r echo = FALSE}
+setwd("C:/Paul/current_projects/py_neoclassical_growth")
+```
+
+
+Additionaly observations and variables are selected and created using the functions `select`, `filter`, and `mutate` from the tidyverse package. To install and activate the tidyverse use
+
+```{r eval=FALSE}
+install.packages("tidyverse")
+library(tidyverse)
+```
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+library(tidyverse)
+```
+
+Data used to calibrate the neoclassical growth model is available in the Penn World Table. The data can be downloaded directly in R using the code 
+
+```{r eval=FALSE}
+fileUrl <- "http://www.rug.nl/ggdc/docs/pwt90.xlsx"
+download.file(fileUrl, destfile="pwt90.xlsx", method="curl")
+```
+
+Once you have downloaded the file pwt90.xlsx, open the file in Excel. Sheet two of pwt90.xlsx provides variable definitions. The third sheet contains the data used to calibrate the neoclassical growth mode. Save sheet three as pwt90.csv in your working directory.
+
+After saving sheet three of pwt90.xlsx as a csv file, the data can be accessed in R with
+
+```{r}
+GrowthData <- read.table("pwt90.csv", sep=",", header=TRUE)
+```
+
+and you can investigate the data with `head(GrowthData)`, `tail(GrowthData)`, and `summary(GrowthData)` or any other method you chose.
+
+Now select out Paraguay, for which there are observations after the year 1970 with 
+
+```{r}
+GrowthData <- GrowthData %>% 
+  filter(country == "Paraguay", year>=1970)
+```
+and select the variables used in the calibration with
+```{r}
+GrowthData <- GrowthData %>% 
+  select(country, year, pop, emp, avh, rgdpna, rkna, rtfpna, labsh, delta)
+```
+
+##Calibration
+
+Calibration of the neoclassical growth model presented above, requires the following two assumptions:
+
+1. Each variable grows at a constant rate ("Balanced Growth Path" assumption).
+2. The savings rate is constant.
+
+
+
+
 
 This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
 
