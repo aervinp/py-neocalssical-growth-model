@@ -14,16 +14,11 @@ The Neoclassical Growth Model
 In its simplest form the neoclassical growth model is defined by the following set of equations:
 
 *Y*<sub>*t*</sub> = *K*<sub>*t*</sub><sup>*α*</sup>(*A*<sub>*t*</sub>*L*<sub>*t*</sub>)<sup>(1 − *α*)</sup>
-
 *K*<sub>*t* + 1</sub> = *I*<sub>*t*</sub> + (1 − *δ*)*K*<sub>*t*</sub>
-
 *K*<sub>*t* + 1</sub> = *I*<sub>*t*</sub> + (1 − *δ*)*K*<sub>*t*</sub>
-
 *L*<sub>*t* + 1</sub> = (1 + *g*<sub>*L*</sub>)*L*<sub>*t*</sub>
-
 *A*<sub>*t* + 1</sub> = (1 + *g*<sub>*A*</sub>)*A*<sub>*t*</sub>,
-
-along with initial conditions for *K*<sub>0</sub>, *L*<sub>0</sub>, and *A*<sub>0</sub>. *Y*<sub>*t*</sub> is total output measured by real GDP in constant dollars. Total ouput is produced by a Cobb-Douglas production function with capital *K*<sub>*t*</sub>, labor input *L*<sub>*t*</sub>, and productivity *A*<sub>*t*</sub>. The parameter *α*, with 0 &lt; *α* &lt; 1, is referred to as the "physical capital share."
+ along with initial conditions for *K*<sub>0</sub>, *L*<sub>0</sub>, and *A*<sub>0</sub>. *Y*<sub>*t*</sub> is total output measured by real GDP in constant dollars. Total ouput is produced by a Cobb-Douglas production function with capital *K*<sub>*t*</sub>, labor input *L*<sub>*t*</sub>, and productivity *A*<sub>*t*</sub>. The parameter *α*, with 0 &lt; *α* &lt; 1, is referred to as the "physical capital share."
 
 Labor *L*<sub>*t*</sub> and productivity *A*<sub>*t*</sub> grow at exogenous growth rates of *g*<sub>*L*</sub> and *g*<sub>*A*</sub>, respectively. But capital *K*<sub>*t*</sub> is determined by physical capital accumulation, i.e. the "law of motion capital", where future capital *K*<sub>*t* + 1</sub> is determined by investment *I*<sub>*t*</sub>, with the savings rate *s*<sub>*t*</sub> = *I*<sub>*t*</sub>/*Y*<sub>*t*</sub>, and the rate of depreciation *δ*.
 
