@@ -13,8 +13,10 @@ The purpose of this document is to show how to calibrate the neoclassical growth
 
 In its simplest form the neoclassical growth model is defined by the following set of equations:
 
-$$ Y_t=K_t^\alpha(A_tL_t)^{(1-\alpha)} \\$$
-$$ K_{t+1}=I_t+(1-\delta)K_t \\$$
+$$ Y_t=K_t^\alpha(A_tL_t)^{(1-\alpha)}$$
+\
+
+$$ K_{t+1}=I_t+(1-\delta)K_t$$
 $$ L_{t+1}=(1+g_L)L_t$$
 $$ A_{t+1}=(1+g_A)A_t,$$
 along with initial conditions for $K_0, L_0$, and $A_0$. $Y_t$ is total output measured by real GDP in constant dollars. Total ouput is produced by a Cobb-Douglas production function with capital $K_t$, labor input $L_t$, and productivity $A_t$. The parameter $\alpha$, with $0<\alpha<1$, is referred to as the "physical capital share."
