@@ -17,6 +17,8 @@ In its simplest form the neoclassical growth model is defined by the following s
 
 *K*<sub>*t* + 1</sub> = *I*<sub>*t*</sub> + (1 − *δ*)*K*<sub>*t*</sub>
 
+*K*<sub>*t* + 1</sub> = *I*<sub>*t*</sub> + (1 − *δ*)*K*<sub>*t*</sub>
+
 *L*<sub>*t* + 1</sub> = (1 + *g*<sub>*L*</sub>)*L*<sub>*t*</sub>
 
 *A*<sub>*t* + 1</sub> = (1 + *g*<sub>*A*</sub>)*A*<sub>*t*</sub>,
