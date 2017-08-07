@@ -76,6 +76,29 @@ Calibration of the neoclassical growth model presented above, requires the follo
 1.  Each variable grows at a constant rate ("Balanced Growth Path" assumption).
 2.  The savings rate is constant.
 
+To begin, I specify a cutoff year. I specify the year 1999, that is data before 1999 will be used to calibrate the model, so that I can compare the model with the observed data after 1999.
+
+``` r
+cutoffyear <- 1999
+```
+
+Next, I obtain the average depreciation rate and calculate the labor and capital shares from the data
+
+``` r
+avgdelta <- mean(GrowthData$delta[GrowthData$year<cutoffyear])
+avglabshare <- mean(GrowthData$labsh[GrowthData$year<cutoffyear])
+avgcapshare <- (1-avglabshare)
+```
+
+Similarly, I calculate the average growth rates for output *Y*<sub>*t*</sub> and *L*<sub>*t*</sub>, between 1970 and the cutoff year as
+
+``` r
+gy <- (log(GrowthData$rgdpna[GrowthData$year==(cutoffyear-1)])-log(GrowthData$rgdpna[GrowthData$year==1970]))/((cutoffyear-1)-1970)
+gl <- (log(GrowthData$emp[GrowthData$year==(cutoffyear-1)])-log(GrowthData$emp[GrowthData$year==1970]))/((cutoffyear-1)-1970)
+```
+
+ga &lt;- gy-gl
+
 This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
 
 When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:

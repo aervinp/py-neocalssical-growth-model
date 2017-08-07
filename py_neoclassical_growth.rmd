@@ -32,7 +32,6 @@ setwd("C:/.../your_working_directory")
 setwd("C:/Paul/current_projects/py_neoclassical_growth")
 ```
 
-
 Additionaly observations and variables are selected and created using the functions `select`, `filter`, and `mutate` from the tidyverse package. To install and activate the tidyverse use
 
 ```{r eval=FALSE}
@@ -79,6 +78,31 @@ Calibration of the neoclassical growth model presented above, requires the follo
 
 1. Each variable grows at a constant rate ("Balanced Growth Path" assumption).
 2. The savings rate is constant.
+
+To begin, I specify a cutoff year. I specify the year 1999, that is data before 1999 will be used to calibrate the model, so that I can compare the model with the observed data after 1999. 
+
+```{r}
+cutoffyear <- 1999
+```
+
+Next, I obtain the average depreciation rate and calculate the labor and capital shares from the data
+
+```{r}
+avgdelta <- mean(GrowthData$delta[GrowthData$year<cutoffyear])
+avglabshare <- mean(GrowthData$labsh[GrowthData$year<cutoffyear])
+avgcapshare <- (1-avglabshare)
+```
+
+Similarly, I calculate the average growth rates for output $Y_t$ and $L_t$, between 1970 and the cutoff year as
+
+```{r}
+gy <- (log(GrowthData$rgdpna[GrowthData$year==(cutoffyear-1)])-log(GrowthData$rgdpna[GrowthData$year==1970]))/((cutoffyear-1)-1970)
+gl <- (log(GrowthData$emp[GrowthData$year==(cutoffyear-1)])-log(GrowthData$emp[GrowthData$year==1970]))/((cutoffyear-1)-1970)
+```
+
+
+
+ga <- gy-gl
 
 
 
