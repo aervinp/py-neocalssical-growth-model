@@ -1,12 +1,12 @@
 Calibrating the Neoclassical Growth Model to Paraguay
 ================
-Paul
+Paul Ervin
 2017-08-07
 
 Introduction
 ------------
 
-The purpose of this document is to show how to calibrate the neoclassical growth model. The example shown here is for Paraguay, but the same method could be applied to any country where data is available. I begin by introducing the model. Then, I perform the calibration, forecast GDP to the year 2025, and perform some counterfactuals.
+The purpose of this document is to show how to calibrate the neoclassical growth model. The example shown here is for Paraguay, but the same method could be applied to any country where data is available. I begin by introducing the model. Then, I perform the calibration, forecast GDP to the year 2025, and explore a counterfactual investment shock.
 
 The Neoclassical Growth Model
 -----------------------------
@@ -15,8 +15,6 @@ In its simplest form the neoclassical growth model is defined by the following s
 
 -   
     *Y*<sub>*t*</sub> = *K*<sub>*t*</sub><sup>*α*</sup>(*A*<sub>*t*</sub>*L*<sub>*t*</sub>)<sup>(1 − *α*)</sup>
--   
-    *K*<sub>*t* + 1</sub> = *I*<sub>*t*</sub> + (1 − *δ*)*K*<sub>*t*</sub>
 -   
     *K*<sub>*t* + 1</sub> = *I*<sub>*t*</sub> + (1 − *δ*)*K*<sub>*t*</sub>
 -   
@@ -78,10 +76,10 @@ GrowthData <- GrowthData %>%
 Calibration
 -----------
 
-Calibration of the neoclassical growth model presented above, requires the following two assumptions:
+Calibration of the neoclassical growth model presented above is based on the following assumptions:
 
 1.  Each variable grows at a constant rate ("Balanced Growth Path" assumption).
-2.  The savings rate is constant.
+2.  The savings rate is constant, *s*<sub>*t*</sub> = *s*.
 
 To begin, I specify a cutoff year. I specify the year 1999, that is data before 1999 will be used to calibrate the model, so that I can compare the model with the observed data after 1999.
 
@@ -89,7 +87,7 @@ To begin, I specify a cutoff year. I specify the year 1999, that is data before 
 cutoffyear <- 1999
 ```
 
-Next, I obtain the average depreciation rate and calculate the labor and capital shares from the data
+Next, from the data, I obtain the average depreciation rate *δ* and calculate the labor and capital shares, 1 − *α* and *α*, respectively.
 
 ``` r
 avgdelta <- mean(GrowthData$delta[GrowthData$year<cutoffyear])
@@ -97,36 +95,122 @@ avglabshare <- mean(GrowthData$labsh[GrowthData$year<cutoffyear])
 avgcapshare <- (1-avglabshare)
 ```
 
-Similarly, I calculate the average growth rates for output *Y*<sub>*t*</sub> and *L*<sub>*t*</sub>, between 1970 and the cutoff year as
+I calculate the average growth rate for labor *g*<sub>*L*</sub>, between 1970 and the cutoff year as
 
 ``` r
-gy <- (log(GrowthData$rgdpna[GrowthData$year==(cutoffyear-1)])-log(GrowthData$rgdpna[GrowthData$year==1970]))/((cutoffyear-1)-1970)
 gl <- (log(GrowthData$emp[GrowthData$year==(cutoffyear-1)])-log(GrowthData$emp[GrowthData$year==1970]))/((cutoffyear-1)-1970)
 ```
 
-ga &lt;- gy-gl
-
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
-
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+The average savings rate *s* can be calculated from the data using the law of motion of capital to calculate investment *I*<sub>*t*</sub>. Formally, *I*<sub>*t*</sub> = *K*<sub>*t* + 1</sub> − (1 − *δ*)\**K*<sub>*t*</sub>, and recall *s* = *I*<sub>*t*</sub>/*Y*<sub>*t*</sub>.
 
 ``` r
-summary(cars)
+GrowthData <- mutate(GrowthData, rina = lead(rkna)-(1-avgdelta)*rkna)
+GrowthData <-mutate(GrowthData, s = rina/rgdpna)
+avgs <- mean(GrowthData$s[GrowthData$year<cutoffyear])
 ```
 
-    ##      speed           dist       
-    ##  Min.   : 4.0   Min.   :  2.00  
-    ##  1st Qu.:12.0   1st Qu.: 26.00  
-    ##  Median :15.0   Median : 36.00  
-    ##  Mean   :15.4   Mean   : 42.98  
-    ##  3rd Qu.:19.0   3rd Qu.: 56.00  
-    ##  Max.   :25.0   Max.   :120.00
+Additonally, from the law of motion of capital and the production function
 
-Including Plots
----------------
+-   *K*<sub>*t* + 1</sub> = *s* \* *Y*<sub>*t*</sub> + (1 − *δ*)*K*<sub>*t*</sub>
+-   =&gt; *K*<sub>*t* + 1</sub> = *s* \* *K*<sub>*t*</sub><sup>*α*</sup>(*A*<sub>*t*</sub>*L*<sub>*t*</sub>)<sup>(1 − *α*)</sup> + (1 − *δ*)*K*<sub>*t*</sub>
+-   =&gt; (*g*<sub>*K*</sub> + *δ*)*K*<sub>*t*</sub>/(*A*<sub>*t*</sub>*L*<sub>*t*</sub>)=*s* \* (*K*<sub>*t*</sub>/(*A*<sub>*t*</sub>*L*<sub>*t*</sub>))<sup>*α*</sup>
+-   =&gt; (*g*<sub>*K*</sub> + *δ*)/*s* = ((*A*<sub>*t*</sub>*L*<sub>*t*</sub>)/*K*<sub>*t*</sub>)<sup>(1 − *α*)</sup>
 
-You can also embed plots, for example:
+implies *g*<sub>*A* \* *L*</sub> = *g*<sub>*K*</sub>, because the right-hand-side of the above equation is a ratio of time-invariant constants. And from the production function
 
-![](py_neoclassical_growth_files/figure-markdown_github-ascii_identifiers/pressure-1.png)
+-   *Y*<sub>*t*</sub> = *K*<sub>*t*</sub><sup>*α*</sup>(*A*<sub>*t*</sub>*L*<sub>*t*</sub>)<sup>(</sup>1 − *α*)
+-   =&gt; log(*Y*<sub>*t*</sub>)=*α* \* log(*K*<sub>*t*</sub>)+(1 − *α*)\*log(*A*<sub>*t*</sub> \* *L*<sub>*t*</sub>)
+-   =&gt; *g*<sub>*Y*</sub> = *α* \* *g*<sub>*K*</sub> + (1 − *α*)\**g*<sub>*A* \* *L*</sub>
+-   =&gt; *g*<sub>*Y*</sub> = *g*<sub>*K*</sub>
+-   =&gt; *g*<sub>*Y*</sub> = *g*<sub>*A*</sub> + *g*<sub>*L*</sub>
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+Therfore, I obtain the growth rate of output *g*<sub>*Y*</sub> and use it caluclate the growth rate of productivity *g*<sub>*A*</sub>.
+
+``` r
+gy <- (log(GrowthData$rgdpna[GrowthData$year==(cutoffyear-1)])-log(GrowthData$rgdpna[GrowthData$year==1970]))/((cutoffyear-1)-1970)
+ga <- gy-gl
+```
+
+Finally, I calculate total factor productivity *A*<sub>*t*</sub> from the production function as
+
+``` r
+GrowthData <- mutate(GrowthData, tfp = (rgdpna^(1/(1-avgcapshare)))/(emp*(rkna^(avgcapshare/(1-avgcapshare)))))
+```
+
+Now all the paramaters to run the model have been calibrated. Before running the model, I copy the variables I will use in the model and I add years to the data to use the model to predict into the future.
+
+``` r
+GrowthData <- mutate(GrowthData, memp = emp)
+GrowthData <- mutate(GrowthData, mtfp = tfp)
+GrowthData <- mutate(GrowthData, mrkna = rkna)
+GrowthData <- mutate(GrowthData, mrgdpna = rgdpna)
+
+for(i in 2015:2025) {
+   GrowthData[nrow(GrowthData)+1, ] <- as.list(c(NA, i, rep(NA, 14)))
+}
+```
+
+Running the Model
+-----------------
+
+The calibrated parameters are applied to the data using the code below
+
+``` r
+for(i in cutoffyear:2025) {
+  GrowthData$memp[GrowthData$year==i] <- GrowthData$memp[GrowthData$year==(i-1)]*(1+gl)
+  GrowthData$mtfp[GrowthData$year==i] <- GrowthData$mtfp[GrowthData$year==(i-1)]*(1+ga)
+  GrowthData$mrkna[GrowthData$year==i] <- avgs*GrowthData$mrgdpna[GrowthData$year==(i-1)]+(1-avgdelta)*GrowthData$mrkna[GrowthData$year==(i-1)]  
+  GrowthData$mrgdpna[GrowthData$year==i] <- (GrowthData$mrkna[GrowthData$year==i]^avgcapshare)*(GrowthData$mtfp[GrowthData$year==i]*GrowthData$memp[GrowthData$year==i])^avglabshare 
+}
+```
+
+and the following code plots the results.
+
+``` r
+plot(GrowthData$year, GrowthData$mrgdpna,
+     type = "o",col = "red", xlab = "Year",   
+     ylab = "Real GDP (in Millions)", 
+     main = "Modeled vs. Observed GDP")
+
+lines(GrowthData$year, GrowthData$rgdpna, type = "o", col = "blue")
+legend("topleft", inset=.05,
+       c("Modeled","Observed"), fill=c("red", "blue"), horiz=TRUE)
+```
+
+![](py_neoclassical_growth_files/figure-markdown_github-ascii_identifiers/unnamed-chunk-17-1.png)
+
+Additionally, the model can be modified to explore an investment shock, or other shocks you might want to explore. An example of an investment shock in 2014 is modeled below.
+
+``` r
+for(i in cutoffyear:2025) {
+  GrowthData$memp[GrowthData$year==i] <- GrowthData$memp[GrowthData$year==(i-1)]*(1+gl)
+  GrowthData$mtfp[GrowthData$year==i] <- GrowthData$mtfp[GrowthData$year==(i-1)]*(1+ga)
+  if (i==2014) {
+   GrowthData$mrkna[GrowthData$year==i] <- avgs*GrowthData$mrgdpna[GrowthData$year==(i-1)]+(1-avgdelta)*GrowthData$mrkna[GrowthData$year==(i-1)]+GrowthData$mrkna[GrowthData$year==(i-1)]*0.35
+  } else {
+    GrowthData$mrkna[GrowthData$year==i] <- avgs*GrowthData$mrgdpna[GrowthData$year==(i-1)]+(1-avgdelta)*GrowthData$mrkna[GrowthData$year==(i-1)]
+  }
+    GrowthData$mrgdpna[GrowthData$year==i] <- (GrowthData$mrkna[GrowthData$year==i]^avgcapshare)*(GrowthData$mtfp[GrowthData$year==i]*GrowthData$memp[GrowthData$year==i])^avglabshare 
+}
+```
+
+And the investment shock can be seen in the plot below.
+
+``` r
+plot(GrowthData$year, GrowthData$mrgdpna,type = "o",col = "red", xlab = "Year", ylab = "Real GDP (in Millions)", 
+     main = "Modeled vs. Observed GDP")
+
+lines(GrowthData$year, GrowthData$rgdpna, type = "o", col = "blue")
+legend("topleft", inset=.05,
+       c("Modeled","Observed"), fill=c("red", "blue"), horiz=TRUE)
+```
+
+![](py_neoclassical_growth_files/figure-markdown_github-ascii_identifiers/unnamed-chunk-19-1.png)
+
+Conclusion
+----------
+
+In this document, I calibrated the neoclassical growth model to Paraguayan data. The calibrated paramaters can further be used to decompose the sources of economic growth. Interested readers are recommended to see the following sources:
+
+-   Choi, Seung Mo; Economic Growth Lecture Notes, 2012. <https://sites.google.com/site/seungmochoi/502growth.pdf>
+-   Hall, R. E., & Jones, C. I. (1999). Why do some countries produce so much more output per worker than others?. The quarterly journal of economics, 114(1), 83-116.
